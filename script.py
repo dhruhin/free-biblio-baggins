@@ -1,9 +1,9 @@
 import sys
-import re
-import os
-import ebooklib
 from ebooklib import epub
 from bs4 import BeautifulSoup
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def find_bibliography_hrefs(book):
     """
@@ -86,12 +86,12 @@ if __name__ == "__main__":
         print("Usage: python script.py <path_to_epub>")
         sys.exit(1)
 
-    epub_path = sys.argv[1]]
+    epub_path = sys.argv[1]
 
 
     try:
         # Load the EPUB file
-        book = epub.read_epub(epub_path)
+        book = epub.read_epub(epub_path, options={'ignore_ncx': True})
 
         # save_chapters(book, output_dir)
         refs = find_bibliography_hrefs(book)
@@ -101,7 +101,11 @@ if __name__ == "__main__":
 
         # Print the extracted texts
         for href, text in extracted_texts.items():
-            print(f"Text from {href}:\n{text}\n")
+            if len(extracted_texts) == 1:
+                print(text)
+            else:
+                print(f"Text from {href}:\n{text}\n")
+
 
     except Exception as e:
         print(f"An error occurred: {e}")
